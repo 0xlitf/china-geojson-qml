@@ -10,6 +10,10 @@ ApplicationWindow {
     height: 768
     title: qsTr("PySide6 QML Application")
 
+    ChinaSvg {
+        anchors.fill: parent
+    }
+
     Component.onCompleted: {
         console.log("Application initialized")
     }
