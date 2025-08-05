@@ -27,6 +27,15 @@ def geojson_to_svg_path(feature):
         for i, point in enumerate(inner_element):  # 只取外环坐标
             x, y = point
 
+            if x < x_min:
+                x_min = x
+            if x > x_max:
+                x_max = x
+            if y < y_min:
+                y_min = y
+            if y > y_max:
+                y_max = y
+
             x = x - x_min
             y = y_max - y
             x *= 800 / (x_max - x_min)
