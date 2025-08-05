@@ -11,7 +11,7 @@ ApplicationWindow {
     title: qsTr("PySide6 QML Application")
 
     ChinaSvg {
-        anchors.fill: parent
+        anchors.centerIn: parent
     }
 
     Component.onCompleted: {

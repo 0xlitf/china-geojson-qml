@@ -1,7 +1,15 @@
 import json
 
 
+x_min = 73.4766
+x_max = 135.0879
+y_min = 18.1055
+y_max = 53.5693
+
+
 def geojson_to_svg_path(feature):
+    global x_min, x_max, y_min, y_max
+
     coordinates = feature['geometry']['coordinates']
     svg_paths = []
 
@@ -18,6 +26,20 @@ def geojson_to_svg_path(feature):
 
         for i, point in enumerate(inner_element):  # 只取外环坐标
             x, y = point
+
+            if x < x_min:
+                x_min = x
+            if x > x_max:
+                x_max = x
+            if y < y_min:
+                y_min = y
+            if y > y_max:
+                y_max = y
+
+            x = x - x_min
+            y = y - y_min
+            x *= 800 / (x_max - x_min)
+            y *= 600 / (y_max - y_min)
             if i == 0:
                 path.append(f"M {x} {y}")
             else:
@@ -37,7 +59,10 @@ for feature in data['features']:
     province_name = feature['properties']['name']
     svg_paths = geojson_to_svg_path(feature)
 
+
     print(f"// {province_name}")
     for path in svg_paths:
         print(f'SvgShape {{ path: "{path}" }}')
     print()
+
+print(x_min, x_max, y_min, y_max)  # 73.4766 96.416 34.3213 49.1748
