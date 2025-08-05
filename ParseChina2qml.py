@@ -42,7 +42,7 @@ def geojson_to_svg_path(feature):
 
 
 # 读取 GeoJSON 文件
-with open('china.json', 'r', encoding='utf-8') as f:
+with open('./geometryCouties/110100.json', 'r', encoding='utf-8-sig') as f:
     data = json.load(f)
 
 # 为每个省份生成 SVG 路径
