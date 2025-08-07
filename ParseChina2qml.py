@@ -72,7 +72,7 @@ def geojson_to_svg_path(feature):
 # 读取 GeoJSON 文件
 # ./geometryCouties/110100.json
 # china.json
-with open('china.json', 'r', encoding='utf-8-sig') as f:
+with open('./geometryCouties/110100.json', 'r', encoding='utf-8-sig') as f:
     data = json.load(f)
 
 for feature in data['features']:
