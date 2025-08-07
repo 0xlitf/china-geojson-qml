@@ -1,21 +1,18 @@
 import json
 
 
-x_min = 73.4766
-x_max = 135.0879
-y_min = 18.1055
-y_max = 53.5693
+x_min = 180
+x_max = -180
+y_min = 90
+y_max = -90
 
 
 def geojson_to_svg_path(feature):
     global x_min, x_max, y_min, y_max
 
     coordinates = feature['geometry']['coordinates']
-    svg_paths = []
 
     for polygon in coordinates:
-        path = []
-
         inner_element = []
         if feature['geometry']['type'] == 'Polygon':
             inner_element = polygon
@@ -36,6 +33,24 @@ def geojson_to_svg_path(feature):
             if y > y_max:
                 y_max = y
 
+    # print(x_min, x_max, y_min, y_max)
+
+    svg_paths = []
+
+    for polygon in coordinates:
+        path = []
+
+        inner_element = []
+        if feature['geometry']['type'] == 'Polygon':
+            inner_element = polygon
+        elif feature['geometry']['type'] == 'MultiPolygon':
+            inner_element = polygon[0]
+        else:
+            ...
+
+        for i, point in enumerate(inner_element):  # 只取外环坐标
+            x, y = point
+
             x = x - x_min
             y = y_max - y
             x *= 800 / (x_max - x_min)
@@ -44,14 +59,16 @@ def geojson_to_svg_path(feature):
                 path.append(f"M {x} {y}")
             else:
                 path.append(f"L {x} {y}")
-        path.append("Z")  # 闭合路径
+        # path.append("Z")  # 闭合路径
         svg_paths.append(" ".join(path))
 
     return svg_paths
 
 
 # 读取 GeoJSON 文件
-with open('./geometryCouties/110100.json', 'r', encoding='utf-8-sig') as f:
+# ./geometryCouties/110100.json
+# china.json
+with open('china.json', 'r', encoding='utf-8-sig') as f:
     data = json.load(f)
 
 # 为每个省份生成 SVG 路径
@@ -62,7 +79,7 @@ for feature in data['features']:
 
     print(f"// {province_name}")
     for path in svg_paths:
-        print(f'SvgShape {{ path: "{path}" }}')
+        print(f'SvgShape {{ name: "{province_name}"; path: "{path}" }}')
     print()
 
-print(x_min, x_max, y_min, y_max)  # 73.4766 96.416 34.3213 49.1748
+print(x_min, x_max, y_min, y_max)  # 73.4766 135.0879 18.1055 53.5693

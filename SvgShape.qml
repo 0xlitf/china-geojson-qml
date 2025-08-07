@@ -6,6 +6,7 @@ Shape {
     id: root
 
     // 暴露给外部的属性
+    property string name: ""          //
     property string path: ""          // SVG 路径数据
     property color fillColor: "#ff53D6FF"  // 默认填充色
     property color hoverColor: "#ff00C2FF" // 悬停时的填充色
@@ -20,7 +21,7 @@ Shape {
     }
 
     TapHandler {
-        onTapped: console.info("Shape clicked")
+        onTapped: console.info(name," clicked")
     }
 
     ShapePath {
