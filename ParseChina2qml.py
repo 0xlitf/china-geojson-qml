@@ -7,9 +7,8 @@ y_min = 90
 y_max = -90
 
 
-def geojson_to_svg_path(feature):
+def calculate_box(feature):
     global x_min, x_max, y_min, y_max
-
     coordinates = feature['geometry']['coordinates']
 
     for polygon in coordinates:
@@ -34,6 +33,11 @@ def geojson_to_svg_path(feature):
                 y_max = y
 
     # print(x_min, x_max, y_min, y_max)
+
+
+def geojson_to_svg_path(feature):
+    global x_min, x_max, y_min, y_max
+    coordinates = feature['geometry']['coordinates']
 
     svg_paths = []
 
@@ -71,15 +75,17 @@ def geojson_to_svg_path(feature):
 with open('china.json', 'r', encoding='utf-8-sig') as f:
     data = json.load(f)
 
+for feature in data['features']:
+    calculate_box(feature)
+
+print(x_min, x_max, y_min, y_max)  # 73.4766 135.0879 18.1055 53.5693
+
 # 为每个省份生成 SVG 路径
 for feature in data['features']:
     province_name = feature['properties']['name']
     svg_paths = geojson_to_svg_path(feature)
 
-
     print(f"// {province_name}")
     for path in svg_paths:
         print(f'SvgShape {{ name: "{province_name}"; path: "{path}" }}')
     print()
-
-print(x_min, x_max, y_min, y_max)  # 73.4766 135.0879 18.1055 53.5693
