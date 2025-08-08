@@ -1,14 +1,18 @@
 import os
 import subprocess
 from pathlib import Path
-from pypinyin import pinyin, Style
+from pypinyin import pinyin, Style, load_phrases_dict
 
+load_phrases_dict({
+    "藏": [["zàng"]],  # 强制指定"藏"读zàng
+    "重": [["chong"]]
+})
 
 # 配置路径
 QT_BIN_PATH = r"C:\Qt\6.9.0\msvc2022_64\bin"
 SVGTOQML_EXE = os.path.join(QT_BIN_PATH, "svgtoqml.exe")
 SVG_SOURCE_DIR = r".\china_province_svg"
-QML_TARGET_DIR = r".\china_province_qml"
+QML_TARGET_DIR = r".\china_province_svg2qml"
 
 
 def hanzi_to_pinyin(filename):

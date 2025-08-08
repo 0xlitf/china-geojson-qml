@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import "./china_province_qml_proceed/" as Provinces
+import "./china_province_svg2qml_converted/" as Provinces
 import "."
 
 ApplicationWindow {
@@ -14,8 +14,8 @@ ApplicationWindow {
 
     Provinces.ZhongGuo {
         anchors.centerIn: parent
-        width: 500
-        height: 500
+        width: 1000
+        height: 1000
     }
 
     Component.onCompleted: {

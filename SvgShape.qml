@@ -5,6 +5,8 @@ import QtQuick.Shapes 1.15
 Shape {
     id: root
 
+    signal blockClicked(string blockName)
+
     // 暴露给外部的属性
     property string name: ""          //
     property string path: ""          // SVG 路径数据
@@ -21,7 +23,10 @@ Shape {
     }
 
     TapHandler {
-        onTapped: console.info(name," clicked")
+        onTapped: {
+            // console.info(name," clicked")
+            root.blockClicked(name)
+        }
     }
 
     ShapePath {

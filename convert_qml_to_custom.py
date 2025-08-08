@@ -4,8 +4,8 @@ from pathlib import Path
 import shutil
 
 # 配置路径
-QML_SOURCE_DIR = r".\china_province_qml"
-QML_TARGET_DIR = r".\china_province_qml_proceed"
+QML_SOURCE_DIR = r".\china_province_svg2qml"
+QML_TARGET_DIR = r".\china_province_svg2qml_converted"
 
 
 def process_qml_file(qml_file: Path):
@@ -13,7 +13,9 @@ def process_qml_file(qml_file: Path):
     with open(qml_file, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # 使用正则匹配所有PathSvg路径
+    width_match = re.search(r'implicitWidth\s*:\s*(\d+)', content)
+    height_match = re.search(r'implicitHeight\s*:\s*(\d+)', content)
+
     pattern = re.compile(r'PathSvg\s*\{\s*path:\s*"([^"]+)"', re.DOTALL)
     matches = pattern.findall(content)
 
@@ -21,47 +23,49 @@ def process_qml_file(qml_file: Path):
         print(f"Warning: No PathSvg found in {qml_file}")
         return None
 
-    paths_formatted = "\n        ".join(
-        [f'SvgShape {{ name: "path_{index}"; path: "{path}" }}' for index, path in enumerate(matches, start=1)]
+    paths_formatted = "\n            ".join(
+        [f'SvgShape {{ onBlockClicked: {{console.info(name," clicked");}} name: "path_{index}"; path: "{path}" }}' for index, path in enumerate(matches, start=0)]
     )
     new_content = """
 import QtQuick
 import QtQuick.Shapes
-import ".."
 // import controls
+import ".."
 
 Item {
     Rectangle {
         id: backgroundRect
         // color: "#333333"
         color: "transparent"
-
+""" + f"""
+        property var convertWidth: {width_match.group(1)}
+        property var convertHeight: {height_match.group(1)}
+""" + """
         anchors.centerIn: parent
         width: {
-            if (parent.height / parent.width > 6/8) {
+            if (parent.height / parent.width > convertHeight/convertWidth) {
                 return parent.width
             } else {
-                return parent.height * 8 / 6
+                return parent.height * convertWidth / convertHeight
             }
         }
-        height: width * (6/8)  // 固定比例
+        height: width * (convertHeight/convertWidth)  // 固定比例
 
         Item {
             id: svg
             // anchors.centerIn: parent
 
-            property var scale_: Math.min(parent.width / 800, parent.height / 600)
+            property var scale_: Math.min(parent.width / parent.convertWidth, parent.height / parent.convertHeight)
             onScale_Changed: {
-                console.log("onScale_Changed: ", parent.width / 800, parent.height / 600, scale_)
+                console.log("onScale_Changed: ", parent.width / parent.convertWidth, parent.height / parent.convertHeight, scale_)
             }
             transform: [
                 Scale { xScale: svg.scale_; yScale: svg.scale_ }
             ]
-            // height: parent.height - 50
-            // width: parent.width - 50
-    """ + f"""// Processed from {qml_file.name}
+    """ + f"""
+            // Processed from {qml_file.name}
 
-        {paths_formatted}
+            {paths_formatted}
     """ + """
         }
     }

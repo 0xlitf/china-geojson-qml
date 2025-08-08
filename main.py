@@ -38,7 +38,7 @@ def main():
 
     # 获取 QML 文件绝对路径
     qml_file = Path(__file__).parent / "main.qml"
-    # qml_file = Path(__file__).parent / "china_province_qml" / "zhongguo.qml"
+    # qml_file = Path(__file__).parent / "china_province_svg2qml" / "zhongguo.qml"
     print(qml_file)
     qml_url = QUrl.fromLocalFile(os.fspath(qml_file.resolve()))
     print(qml_url)
