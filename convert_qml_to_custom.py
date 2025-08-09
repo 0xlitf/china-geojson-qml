@@ -7,6 +7,10 @@ import shutil
 QML_SOURCE_DIR = r".\china_province_svg2qml"
 QML_TARGET_DIR = r".\china_province_svg2qml_converted"
 
+relation = {
+    "ZhongGuo": ["XinJiangWeiWuErZuZiZhiQu", "QingHaiSheng", "XiZangZiZhiQu", "YunNanSheng", "SiChuanSheng", "NeiMengGuZiZhiQu", "GanSuSheng", "NingXiaHuiZuZiZhiQu", "HaiNanSheng", "TaiWanSheng", "HeiLongJiangSheng", "JiLinSheng", "LiaoNingSheng", "BeiJingShi", "TianJinShi", "HeBeiSheng", "", "ShanDongSheng", "ShanXiSheng", "ShhanXiSheng", "HeNanSheng", "", "JiangSuSheng", "AnHuiSheng", "ZheJiangSheng", "HuBeiSheng", "ChongQingShi", "GuiZhouSheng", "HuNanSheng", "JiangXiSheng", "FuJianSheng", "GuangXiSheng", "GuangDongSheng", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+}
+
 
 def process_qml_file(qml_file: Path):
     """处理单个QML文件，提取PathSvg数据"""
@@ -18,14 +22,22 @@ def process_qml_file(qml_file: Path):
 
     pattern = re.compile(r'PathSvg\s*\{\s*path:\s*"([^"]+)"', re.DOTALL)
     matches = pattern.findall(content)
+    print(f"{qml_file.stem} matches {len(matches)} ")
 
     if not matches:
         print(f"Warning: No PathSvg found in {qml_file}")
         return None
+    paths_formatted = []
 
-    paths_formatted = "\n            ".join(
-        [f'SvgShape {{ onBlockClicked: {{console.info(convertedQML.objectName, name," clicked");}} objectName: convertedQML.objectName; name: "path_{index}"; path: "{path}" }}' for index, path in enumerate(matches, start=0)]
-    )
+    for index, path in enumerate(matches, start=0):
+        # print(f"{index} {relation["ZhongGuo"][index]}")
+        if qml_file.stem in relation.keys():
+            paths_formatted.append(f'SvgShape {{ onBlockClicked: {{console.info(convertedQML.objectName, index, name," clicked");}} objectName: convertedQML.objectName; property int index: {index}; name: "{relation["ZhongGuo"][index]}"; path: "{path}" }}')
+        else:
+            paths_formatted.append(f'SvgShape {{ onBlockClicked: {{console.info(convertedQML.objectName, index, name, " clicked");}} objectName: convertedQML.objectName; property int index: {index}; name: "path_{index}"; path: "{path}" }}')
+
+
+    paths_formatted = "\n            ".join(paths_formatted)
     new_content = """
 import QtQuick
 import QtQuick.Shapes
@@ -100,10 +112,11 @@ def process_directory():
                 target_path = Path(QML_TARGET_DIR) / relative_path
                 target_path.parent.mkdir(parents=True, exist_ok=True)
 
+                print(f"Processing: {qml_path} -> {target_path}")
+
                 with open(target_path, 'w', encoding='utf-8') as f:
                     f.write(processed_content)
 
-                print(f"Processed: {qml_path} -> {target_path}")
 
 
 if __name__ == "__main__":

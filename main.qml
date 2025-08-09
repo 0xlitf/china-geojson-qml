@@ -12,7 +12,7 @@ ApplicationWindow {
     height: 768
     title: qsTr("PySide6 QML Application")
 
-    Provinces.ZhongGuo {
+    Provinces.HuBeiSheng {
         anchors.centerIn: parent
         width: 1000
         height: 1000

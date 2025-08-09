@@ -5,7 +5,8 @@ from pypinyin import pinyin, Style, load_phrases_dict
 
 load_phrases_dict({
     "藏": [["zàng"]],  # 强制指定"藏"读zàng
-    "重": [["chong"]]
+    "重": [["chong"]],
+    "陕": [["Shhan"]],
 })
 
 # 配置路径
