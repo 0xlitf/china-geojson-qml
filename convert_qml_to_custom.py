@@ -32,9 +32,10 @@ def process_qml_file(qml_file: Path):
     for index, path in enumerate(matches, start=0):
         # print(f"{index} {relation["ZhongGuo"][index]}")
         if qml_file.stem in relation.keys():
-            paths_formatted.append(f'SvgShape {{ onBlockClicked: {{console.info(convertedQML.objectName, index, name," clicked");}} objectName: convertedQML.objectName; property int index: {index}; name: "{relation["ZhongGuo"][index]}"; path: "{path}" }}')
+            paths_formatted.append(f'SvgShape {{ onBlockClicked: {{console.info(index, convertedQML.objectName, objectName," clicked");}} objectName: "{relation["ZhongGuo"][index]}"; property int index: {index}; path: "{path}" }}')
+
         else:
-            paths_formatted.append(f'SvgShape {{ onBlockClicked: {{console.info(convertedQML.objectName, index, name, " clicked");}} objectName: convertedQML.objectName; property int index: {index}; name: "path_{index}"; path: "{path}" }}')
+            paths_formatted.append(f'SvgShape {{ onBlockClicked: {{console.info(index, convertedQML.objectName, objectName," clicked");}} objectName: convertedQML.objectName + "_{index}"; property int index: {index}; path: "{path}" }}')
 
 
     paths_formatted = "\n            ".join(paths_formatted)
