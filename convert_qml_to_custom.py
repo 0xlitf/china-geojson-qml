@@ -24,7 +24,7 @@ def process_qml_file(qml_file: Path):
         return None
 
     paths_formatted = "\n            ".join(
-        [f'SvgShape {{ onBlockClicked: {{console.info(name," clicked");}} name: "path_{index}"; path: "{path}" }}' for index, path in enumerate(matches, start=0)]
+        [f'SvgShape {{ onBlockClicked: {{console.info(convertedQML.objectName, name," clicked");}} objectName: convertedQML.objectName; name: "path_{index}"; path: "{path}" }}' for index, path in enumerate(matches, start=0)]
     )
     new_content = """
 import QtQuick
@@ -33,6 +33,10 @@ import QtQuick.Shapes
 import ".."
 
 Item {
+    id: convertedQML
+    """ + f"""
+    objectName: "{qml_file.stem}"
+    """ + """
     Rectangle {
         id: backgroundRect
         // color: "#333333"
